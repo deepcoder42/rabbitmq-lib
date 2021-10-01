@@ -41,8 +41,8 @@ class PublishMsg(object):
     Description:  Class stub holder for pika class.
 
     Methods:
-        __init__ -> Class initialization.
-        basic_publish -> Stub holder for basic_publish function.
+        __init__
+        basic_publish
 
     """
 
@@ -70,11 +70,11 @@ class PublishMsg(object):
         Description:  Stub holder for basic_publish function.
 
         Arguments:
-            exchange -> Arg stub holder.
-            routing_key -> Arg stub holder.
-            body -> Arg stub holder.
-            mandatory -> Arg stub holder.
-            properties -> Arg stub holder.
+            exchange
+            routing_key
+            body
+            mandatory
+            properties
 
         """
 
@@ -94,8 +94,10 @@ class UnitTest(unittest.TestCase):
     Description:  Class which is a representation of a unit testing.
 
     Methods:
-        setUp -> Initialize testing environment.
-        test_publish_msg -> Test publish_msg method.
+        setUp
+        test_pika_pre
+        test_pika_post
+        test_publish_msg
 
     """
 
@@ -120,6 +122,46 @@ class UnitTest(unittest.TestCase):
         self.body = "Message_Body"
 
     @mock.patch("rabbitmq_class.pika")
+    def test_pika_pre(self, mock_pika):
+
+        """Function:  test_pika_pre
+
+        Description:  Test with Pika version less than 1.0.0.
+
+        Arguments:
+
+        """
+
+        mock_pika.PlainCredentials.return_value = "PlainCredentials"
+        mock_pika.ConnectionParameters.return_value = "ConnectionParameters"
+        mock_pika.BasicProperties.return_value = True
+        rmq = rabbitmq_class.RabbitMQPub(self.name, "xxxxx")
+        rmq.channel = PublishMsg()
+        mock_pika.__version__ = "0.11.0"
+
+        self.assertTrue(rmq.publish_msg(self.body))
+
+    @mock.patch("rabbitmq_class.pika")
+    def test_pika_post(self, mock_pika):
+
+        """Function:  test_pika_post
+
+        Description:  Test with Pika version greater than 1.0.0.
+
+        Arguments:
+
+        """
+
+        mock_pika.PlainCredentials.return_value = "PlainCredentials"
+        mock_pika.ConnectionParameters.return_value = "ConnectionParameters"
+        mock_pika.BasicProperties.return_value = True
+        rmq = rabbitmq_class.RabbitMQPub(self.name, "xxxxx")
+        rmq.channel = PublishMsg()
+        mock_pika.__version__ = "1.2.0"
+
+        self.assertTrue(rmq.publish_msg(self.body))
+
+    @mock.patch("rabbitmq_class.pika")
     def test_publish_msg(self, mock_pika):
 
         """Function:  test_publish_msg
@@ -135,6 +177,7 @@ class UnitTest(unittest.TestCase):
         mock_pika.BasicProperties.return_value = True
         rmq = rabbitmq_class.RabbitMQPub(self.name, "xxxxx")
         rmq.channel = PublishMsg()
+        mock_pika.__version__ = "1.2.0"
 
         self.assertTrue(rmq.publish_msg(self.body))
 
